@@ -1,0 +1,39 @@
+import csv
+import gspread
+import time
+
+MONTH = 'March'
+
+file = f"oucu_{MONTH}.csv"
+
+transactions = []
+
+
+
+
+def oucufin(file):
+    with open(file, mode='r') as csv_file:
+        csv_reader = csv.reader(csv_file)
+        for row in csv_reader:
+            date = row[0]
+            name = row[1]
+            amount = row[2]
+            category = 'other'
+            transaction = (date, name, amount, category)
+            print(transaction)
+            transactions.append(transaction)
+    return transactions
+
+
+sa = gspread.service_account()
+sh = sa.open("MonthlyFinanceManager")
+
+wks = sh.worksheet(MONTH)
+
+rows = oucufin(file)
+
+for row in rows:
+    wks.insert_row([row[0], row[1], row[2]], 7)
+    time.sleep(2)
+
+
